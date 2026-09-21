@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dinesh A — VLSI Design Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F1F2ED;
+    --panel:#E7E9E1;
+    --panel-2:#DEE1D7;
+    --ink:#14181D;
+    --ink-soft:#4B535A;
+    --line:#C7CBBF;
+    --copper:#A6572B;
+    --copper-soft:#C97B4A55;
+    --teal:#1F6F63;
+    --gold:#B98A2E;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --disp:'Space Grotesk', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  ::selection{background:var(--copper); color:var(--bg);}
+  :focus-visible{outline:2px solid var(--copper); outline-offset:3px;}
+
+  .wrap{max-width:1080px; margin:0 auto; padding:0 32px;}
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+
+  /* ---------- NAV ---------- */
+  header.site{
+    position:sticky; top:0; z-index:50;
+    background:rgba(241,242,237,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:64px;
+  }
+  .brand{
+    font-family:var(--disp); font-weight:700; font-size:1.05rem;
+    letter-spacing:0.01em;
+  }
+  .brand span{color:var(--copper);}
+  nav ul{
+    list-style:none; display:flex; gap:28px; margin:0; padding:0;
+    font-family:var(--mono); font-size:0.82rem;
+  }
+  nav ul li a{text-decoration:none; color:var(--ink-soft); transition:color .15s;}
+  nav ul li a:hover{color:var(--copper);}
+  @media (max-width:640px){ nav ul{gap:16px;} nav ul li:nth-child(3){display:none;} }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:88px 0 64px;
+    position:relative;
+  }
+  .hero .wrap{
+    display:grid;
+    grid-template-columns:1.15fr 0.85fr;
+    gap:48px;
+    align-items:center;
+  }
+  @media (max-width:800px){ .hero .wrap{grid-template-columns:1fr;} .hero{padding:56px 0 40px;} }
+
+  .kicker{
+    font-family:var(--mono); font-size:0.78rem; color:var(--teal);
+    display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  }
+  .kicker::before{
+    content:""; width:8px; height:8px; background:var(--teal); display:inline-block;
+  }
+  h1.name{
+    font-family:var(--disp); font-weight:700;
+    font-size:clamp(2.6rem, 6vw, 4rem);
+    line-height:1.02; margin:0 0 14px;
+    letter-spacing:-0.01em;
+  }
+  .role{
+    font-family:var(--disp); font-weight:500; font-size:1.3rem;
+    color:var(--copper); margin:0 0 22px;
+  }
+  .lede{
+    max-width:52ch; color:var(--ink-soft); font-size:1.02rem; margin:0 0 30px;
+  }
+  .hero-actions{display:flex; flex-wrap:wrap; gap:14px;}
+  .btn{
+    font-family:var(--mono); font-size:0.82rem;
+    padding:12px 20px; border:1px solid var(--ink); text-decoration:none;
+    display:inline-block; transition:background .15s, color .15s;
+  }
+  .btn.primary{background:var(--ink); color:var(--bg);}
+  .btn.primary:hover{background:var(--copper); border-color:var(--copper);}
+  .btn.ghost{color:var(--ink); border-color:var(--line);}
+  .btn.ghost:hover{border-color:var(--ink);}
+
+  /* schematic diagram */
+  .die{
+    border:1px solid var(--line);
+    background:var(--panel);
+    padding:26px 20px;
+    position:relative;
+  }
+  .die::before, .die::after{
+    content:""; position:absolute; width:10px; height:10px;
+    border:1px solid var(--copper);
+  }
+  .die::before{top:-1px; left:-1px; border-right:none; border-bottom:none;}
+  .die::after{bottom:-1px; right:-1px; border-left:none; border-top:none;}
+  .die-label{
+    font-family:var(--mono); font-size:0.7rem; color:var(--ink-soft);
+    display:flex; justify-content:space-between; margin-bottom:16px;
+  }
+  .pipeline{width:100%; height:auto; display:block;}
+  .pipeline rect{fill:var(--bg); stroke:var(--line); stroke-width:1;}
+  .pipeline .active{stroke:var(--copper);}
+  .pipeline text{font-family:var(--mono); font-size:10px; fill:var(--ink-soft);}
+  .pipeline .stage-label{fill:var(--ink);}
+  .pipeline line{stroke:var(--teal); stroke-width:1; stroke-dasharray:2 2;}
+
+  /* ---------- SECTION BASE ---------- */
+  section{padding:64px 0;}
+  .section-head{
+    display:flex; align-items:baseline; gap:16px; margin-bottom:36px;
+    border-bottom:1px solid var(--line); padding-bottom:16px;
+  }
+  .section-num{font-family:var(--mono); font-size:0.78rem; color:var(--copper);}
+  .section-head h2{
+    font-family:var(--disp); font-weight:600; font-size:1.5rem; margin:0;
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:40px;
+  }
+  @media (max-width:720px){ .about-grid{grid-template-columns:1fr;} }
+  .about-grid p{color:var(--ink-soft); margin:0 0 14px;}
+  .spec-list{
+    font-family:var(--mono); font-size:0.85rem; list-style:none; margin:0; padding:0;
+    border:1px solid var(--line);
+  }
+  .spec-list li{
+    display:flex; justify-content:space-between; gap:12px;
+    padding:12px 16px; border-bottom:1px solid var(--line);
+  }
+  .spec-list li:last-child{border-bottom:none;}
+  .spec-list span:first-child{color:var(--ink-soft);}
+  .spec-list span:last-child{text-align:right;}
+
+  /* ---------- PROJECTS: floorplan grid ---------- */
+  .floorplan{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    grid-auto-rows:auto;
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .block{
+    background:var(--bg);
+    padding:28px 26px;
+  }
+  .block.p1{grid-column:1 / 5;}
+  .block.p2{grid-column:5 / 7;}
+  .block.p3{grid-column:1 / 7;}
+  @media (max-width:760px){
+    .floorplan{grid-template-columns:1fr;}
+    .block.p1, .block.p2, .block.p3{grid-column:1 / -1;}
+  }
+  .block-tag{
+    font-family:var(--mono); font-size:0.7rem; color:var(--teal);
+    margin-bottom:10px; display:block;
+  }
+  .block h3{
+    font-family:var(--disp); font-size:1.12rem; font-weight:600; margin:0 0 12px;
+  }
+  .block ul{margin:0; padding-left:18px; color:var(--ink-soft); font-size:0.94rem;}
+  .block ul li{margin-bottom:6px;}
+
+  /* ---------- SKILLS ---------- */
+  .skill-cols{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line);
+  }
+  @media (max-width:720px){ .skill-cols{grid-template-columns:1fr;} }
+  .skill-col{background:var(--bg); padding:24px 22px;}
+  .skill-col h4{
+    font-family:var(--mono); font-size:0.72rem; color:var(--copper);
+    margin:0 0 14px; font-weight:600;
+  }
+  .skill-col ul{list-style:none; margin:0; padding:0;}
+  .skill-col li{
+    font-size:0.92rem; padding:7px 0; border-bottom:1px dashed var(--line);
+    display:flex; align-items:center; gap:8px;
+  }
+  .skill-col li:last-child{border-bottom:none;}
+  .skill-col li::before{content:"";width:5px;height:5px;background:var(--teal); display:inline-block;}
+
+  /* ---------- EDUCATION ---------- */
+  .edu-item{
+    display:grid; grid-template-columns:120px 1fr; gap:24px;
+    padding:20px 0; border-bottom:1px solid var(--line);
+  }
+  .edu-item:first-child{border-top:1px solid var(--line);}
+  .edu-year{font-family:var(--mono); font-size:0.82rem; color:var(--ink-soft);}
+  .edu-item h3{font-family:var(--disp); font-size:1.05rem; margin:0 0 4px;}
+  .edu-item p{margin:0; color:var(--ink-soft); font-size:0.92rem;}
+  @media (max-width:600px){ .edu-item{grid-template-columns:1fr; gap:6px;} }
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  footer{
+    background:var(--ink); color:var(--bg); padding:60px 0 32px; margin-top:24px;
+  }
+  footer h2{
+    font-family:var(--disp); font-size:clamp(1.8rem,4vw,2.6rem); margin:0 0 20px;
+    font-weight:600;
+  }
+  .contact-row{
+    display:flex; flex-wrap:wrap; gap:28px; font-family:var(--mono); font-size:0.88rem;
+    margin-bottom:36px;
+  }
+  .contact-row a{text-decoration:none; border-bottom:1px solid #5A5F63; padding-bottom:2px;}
+  .contact-row a:hover{border-color:var(--copper); color:var(--copper);}
+  .foot-meta{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    font-family:var(--mono); font-size:0.72rem; color:#8A8F93;
+    border-top:1px solid #2A2E33; padding-top:20px;
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="wrap">
+    <div class="brand">DINESH A <span>/ VLSI</span></div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#work">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="kicker">M.TECH VLSI DESIGN &nbsp;·&nbsp; VELLORE, TN</div>
+      <h1 class="name">Dinesh A</h1>
+      <p class="role">VLSI Design Engineer</p>
+      <p class="lede">
+        I design and verify digital hardware — from radiation-hardened memory cells
+        to pipelined processors — with hands-on work in RTL, Cadence and Synopsys
+        toolchains, aimed at reliable silicon.
+      </p>
+      <div class="hero-actions">
+        <a class="btn primary" href="mailto:dineshdon533@gmail.com">Email me</a>
+        <a class="btn ghost" href="https://www.linkedin.com/in/dinesh-a-18b656249" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn ghost" href="#work">View projects</a>
+      </div>
+    </div>
+
+    <div class="die">
+      <div class="die-label"><span>RV32IM · 2-STAGE PIPELINE</span><span>FIG. 01</span></div>
+      <svg class="pipeline" viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="70" y1="30" x2="250" y2="30"></line>
+        <rect x="20" y="14" width="100" height="32" class="active"></rect>
+        <text x="70" y="34" text-anchor="middle" class="stage-label">FETCH / DECODE</text>
+        <rect x="200" y="14" width="100" height="32" class="active"></rect>
+        <text x="250" y="34" text-anchor="middle" class="stage-label">EXEC / MEM / WB</text>
+
+        <rect x="20" y="66" width="60" height="28"></rect>
+        <text x="50" y="84" text-anchor="middle">REG FILE</text>
+        <rect x="90" y="66" width="60" height="28"></rect>
+        <text x="120" y="84" text-anchor="middle">MUL/DIV</text>
+        <rect x="160" y="66" width="60" height="28"></rect>
+        <text x="190" y="84" text-anchor="middle">6T SRAM</text>
+        <rect x="230" y="66" width="70" height="28"></rect>
+        <text x="265" y="84" text-anchor="middle">SOFTMAX LUT</text>
+
+        <text x="20" y="118" font-size="9">IF</text>
+        <text x="60" y="118" font-size="9">ID</text>
+        <text x="100" y="118" font-size="9">EX</text>
+        <text x="140" y="118" font-size="9">MEM</text>
+        <text x="185" y="118" font-size="9">WB</text>
+        <line x1="20" y1="108" x2="300" y2="108" stroke-dasharray="1 3"></line>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2>About</h2>
+    </div>
+    <div class="about-grid">
+      <div>
+        <p>
+          M.Tech VLSI Design graduate with a B.E. in Electrical and Communication
+          Engineering, focused on digital hardware design and computer architecture.
+          My project work spans processor design, memory reliability and hardware
+          acceleration for machine learning — the full stack from transistor-level
+          concerns to system architecture.
+        </p>
+        <p>
+          Comfortable across Cadence and Synopsys toolchains, RTL design in
+          SystemVerilog, and simulation with ModelSim. I enjoy problems where
+          circuit-level physics meets architectural trade-offs, like keeping an
+          SRAM cell stable under radiation while a pipeline keeps executing above it.
+        </p>
+      </div>
+      <ul class="spec-list">
+        <li><span>Degree</span><span>M.Tech, VLSI Design — VIT</span></li>
+        <li><span>CGPA</span><span>7.66</span></li>
+        <li><span>Prior degree</span><span>B.E. ECE — Panimalar Eng. College</span></li>
+        <li><span>CGPA</span><span>8.24</span></li>
+        <li><span>Location</span><span>Vellore, Tamil Nadu</span></li>
+        <li><span>Focus</span><span>Digital IC · RTL · SRAM · Architecture</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2>Projects</h2>
+    </div>
+    <div class="floorplan">
+      <div class="block p1">
+        <span class="block-tag">MEMORY / RELIABILITY</span>
+        <h3>Impact of Ion Strike on 6T SRAM Stability</h3>
+        <ul>
+          <li>Analyzed the effects of high-energy ion strikes on 6T SRAM cell stability, identifying key failure modes behind single-event upsets (SEU) in memory arrays.</li>
+          <li>Designed and evaluated a Double-Gate FET based radiation-hardening approach that improved noise margin and SEU resilience for high-reliability applications.</li>
+        </ul>
+      </div>
+      <div class="block p2">
+        <span class="block-tag">ML HARDWARE</span>
+        <h3>Hardware Softmax</h3>
+        <ul>
+          <li>Built a hardware-efficient Softmax architecture using LUT-based approximation and fixed-point arithmetic for FPGA/ASIC AI pipelines.</li>
+          <li>Implemented exponentiation, accumulation and reciprocal stages for full probability normalization.</li>
+        </ul>
+      </div>
+      <div class="block p3">
+        <span class="block-tag">CPU ARCHITECTURE</span>
+        <h3>RISC-V CPU — 2-Stage Pipeline (RV32IM), Including Memory</h3>
+        <ul>
+          <li>Designed a 2-stage pipelined RISC-V RV32IM CPU with integrated memory, datapath, control logic and instruction execution.</li>
+          <li>Implemented Multiply/Divide operations via a dedicated multi-cycle execution unit to improve processor functionality and hardware efficiency.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2>Skills</h2>
+    </div>
+    <div class="skill-cols">
+      <div class="skill-col">
+        <h4>EDA TOOLCHAIN</h4>
+        <ul>
+          <li>Cadence</li>
+          <li>Synopsys</li>
+          <li>ModelSim</li>
+        </ul>
+      </div>
+      <div class="skill-col">
+        <h4>DESIGN &amp; VERIFICATION</h4>
+        <ul>
+          <li>RTL Design</li>
+          <li>SystemVerilog</li>
+          <li>Digital Design</li>
+        </ul>
+      </div>
+      <div class="skill-col">
+        <h4>ARCHITECTURE DOMAINS</h4>
+        <ul>
+          <li>VLSI Design</li>
+          <li>SRAM Design</li>
+          <li>LUT-Based Design</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">04</span>
+      <h2>Education</h2>
+    </div>
+    <div class="edu-item">
+      <div class="edu-year">2024 — Present</div>
+      <div>
+        <h3>PostGraduate of VLSI Design</h3>
+        <p>Vellore Institute of Technology · CGPA 7.66</p>
+      </div>
+    </div>
+    <div class="edu-item">
+      <div class="edu-year">2019 — 2023</div>
+      <div>
+        <h3>Bachelor of Electronic and Communication Engineering</h3>
+        <p>Panimalar Engineering College, Chennai · Final CGPA 8.24</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <h2>Let's build something reliable.</h2>
+    <div class="contact-row">
+      <a href="mailto:dineshdon533@gmail.com">dineshdon533@gmail.com</a>
+      <a href="tel:8608506625">8608506625</a>
+      <a href="https://www.linkedin.com/in/dinesh-a-18b656249" target="_blank" rel="noopener">linkedin.com/in/dinesh-a-18b656249</a>
+    </div>
+    <div class="foot-meta">
+      <span>DINESH A — VLSI DESIGN ENGINEER</span>
+      <span>VELLORE, TAMIL NADU, INDIA</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
